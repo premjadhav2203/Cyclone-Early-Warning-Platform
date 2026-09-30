@@ -1,0 +1,66 @@
+{
+  "region_id": "pilot-odisha-puri",
+  "cyclone_id": "fani-2019",
+  "surge": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": { "surge_height_m": 1.5, "zone": "coastal-inner" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[85.79, 19.78], [85.86, 19.78], [85.86, 19.83], [85.79, 19.83], [85.79, 19.78]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": { "surge_height_m": 2.8, "zone": "coastal-outer" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[85.75, 19.75], [85.82, 19.75], [85.82, 19.80], [85.75, 19.80], [85.75, 19.75]]]
+        }
+      }
+    ]
+  },
+  "flood": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": { "flood_depth_m": 0.6, "cause": "rainfall_runoff" },
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[85.80, 19.79], [85.84, 19.79], [85.84, 19.82], [85.80, 19.82], [85.80, 19.79]]]
+        }
+      }
+    ]
+  },
+  "exposure": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": { "infra_type": "hospital", "exposure_score": 0.82, "name": "Puri District Hospital" },
+        "geometry": { "type": "Point", "coordinates": [85.815, 19.803] }
+      },
+      {
+        "type": "Feature",
+        "properties": { "infra_type": "shelter", "exposure_score": 0.35, "name": "Cyclone Shelter 4" },
+        "geometry": { "type": "Point", "coordinates": [85.79, 19.79] }
+      },
+      {
+        "type": "Feature",
+        "properties": { "infra_type": "power_line", "exposure_score": 0.61, "name": "132kV feeder" },
+        "geometry": { "type": "LineString", "coordinates": [[85.78, 19.77], [85.83, 19.81]] }
+      }
+    ]
+  },
+  "summary_stats": {
+    "max_surge_height_m": 2.8,
+    "max_flood_depth_m": 0.6,
+    "mean_exposure_score": 0.59,
+    "affected_areas": ["Puri coastal belt", "Puri District Hospital catchment"]
+  },
+  "bulletin_text": "IMD Bulletin (mock): Very severe cyclonic storm tracking NNE, expected landfall near Puri within 12 hours. Sustained winds 175-185 km/h. Storm surge of 1.5-3m likely to inundate low-lying coastal areas of Puri district.",
+  "satellite_image_url": null
+}
