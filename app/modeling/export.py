@@ -1,9 +1,25 @@
+
 from typing import List, Dict, Optional, Tuple
 
 from app.modeling.surge_model import peak_surge, build_inundation_zones
 from app.modeling.flood_model import build_flood_zones
 from app.modeling.exposure_model import score_infrastructure
 from app.modeling.config import PILOT_REGION_NAME, PILOT_REGION_ID
+
+DEFAULT_EXCLUDED_CATEGORIES = {"road_primary", "road_secondary"}
+
+MAX_FEATURES_PER_CATEGORY = 500
+
+
+def _filter_infrastructure(infrastructure: List[Dict], exclude_categories=()) -> List[Dict]:
+    kept = [f for f in infrastructure if f["category"] not in exclude_categories]
+    by_category: Dict[str, List[Dict]] = {}
+    for f in kept:
+        by_category.setdefault(f["category"], []).append(f)
+    capped = []
+    for feats in by_category.values():
+        capped.extend(feats[:MAX_FEATURES_PER_CATEGORY])
+    return capped
 
 
 def _coastline_geom(coastline_geojson: dict):
@@ -90,6 +106,8 @@ def get_hazard_bundle_from_db(sid: str, region_name: str = PILOT_REGION_NAME,
 
     elevation_grid = get_default_elevation_grid(coastline_geom=coastline, srtm_tif_path=srtm_tif_path)
     infrastructure = db.fetch_infrastructure(region_name)
+
+    infrastructure = _filter_infrastructure(infrastructure, exclude_categories=DEFAULT_EXCLUDED_CATEGORIES)
 
     peak = peak_surge(track_points, coastline)
     surge_fc = build_inundation_zones(coastline, peak["surge_height_m"], elevation_grid, bbox)

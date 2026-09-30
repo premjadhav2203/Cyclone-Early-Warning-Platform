@@ -41,9 +41,14 @@ def build_overpass_query(fragment: str) -> str:
 
 def fetch_category(category: str, fragment: str, retries: int = 3):
     query = build_overpass_query(fragment)
+    
+    headers = {
+        "User-Agent": "cyclone-early-warning-platform/1.0 (hackathon project; contact: set-your-email-here)",
+        "Accept": "application/json",
+    }
     for attempt in range(1, retries + 1):
         try:
-            resp = requests.post(OVERPASS_URL, data={"data": query}, timeout=180)
+            resp = requests.post(OVERPASS_URL, data={"data": query}, headers=headers, timeout=180)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:

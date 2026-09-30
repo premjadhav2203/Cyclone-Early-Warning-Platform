@@ -1,11 +1,11 @@
+
 import argparse
 from shapely.geometry import LineString
 
 from app.modeling.surge_model import peak_surge
 from app.modeling.config import SURGE_PRESSURE_COEFF, SURGE_WIND_COEFF, SURGE_SHELF_SLOPE_DEFAULT, SURGE_SHELF_SLOPE_SUNDARBANS
 
-ODISHA_COASTLINE_APPROX = LineString([(85.70, 19.70), (85.95, 19.90), (86.20, 20.20)])
-
+ODISHA_COASTLINE_APPROX = LineString([(85.55, 19.72), (85.83, 19.80), (86.09, 19.90), (86.35, 20.00)])
 
 HARDCODED_EVENTS = {
     "FANI_2019": {

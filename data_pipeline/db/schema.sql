@@ -145,5 +145,9 @@ INSERT INTO pilot_regions (name, bbox, coastline) VALUES (
     -- replace with a real digitized coastline (e.g. traced from OSM's
     -- natural=coastline ways, or a GEE-derived shoreline) before treating
     -- surge extents as anything more than illustrative.
-    ST_GeomFromText('LINESTRING(85.70 19.70, 85.95 19.90, 86.20 20.20)', 4326)
+    -- Simplified coastline approximation following the real Puri-Konark-Astaranga
+    -- shore (roughly east along the coast). An earlier version of this line
+    -- incorrectly curved north into Bhubaneswar (well inland), which showed up
+    -- as a diagonal surge-zone artifact running inland on the map -- fixed here.
+    ST_GeomFromText('LINESTRING(85.55 19.72, 85.83 19.80, 86.09 19.90, 86.35 20.00)', 4326)
 );
