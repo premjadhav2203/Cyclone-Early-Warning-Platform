@@ -23,29 +23,34 @@ Fani (2019) and Cyclone Amphan (2020).
 
 ## Screenshot
 
-_Add a screenshot of the running dashboard here before sharing the repo._
+![Dashboard showing the Odisha pilot region with storm surge zones hugging the coast, and real OpenStreetMap infrastructure (hospitals, power lines, substations) colored by exposure level](docs/dashboard.png)
+
+_Real data: Cyclone Fani's actual 71-point IBTrACS track, calibrated surge
+model output (1.44m peak surge), and real OSM-extracted infrastructure
+(hospitals, power lines, substations). Road segments are excluded from
+scoring/display by default — see "known limitations" below._
 
 ## Architecture
 
 ```
 ┌──────────────────┐      ┌───────────────────────┐      ┌───────────────────┐
-│  data_pipeline/    │ ───▶ │      PostGIS DB         │ ◀─── │   app/modeling/     │
-│  (ingestion)       │      │   (docker-compose)      │      │  (surge/flood/      │
-│  IBTrACS, OSM,     │      │                          │      │   exposure calc)    │
-│  GEE, met feeds    │      └────────────┬─────────────┘      └──────────┬──────────┘
-└──────────────────┘                    │                               │
-                                          ▼                               ▼
+│  data_pipeline/  │ ───▶ │      PostGIS DB       │ ◀─── │   app/modeling/   │
+│  (ingestion)     │      │   (docker-compose)    │      │  (surge/flood/    │
+│  IBTrACS, OSM,   │      │                       │      │   exposure calc)  │
+│  GEE, met feeds  │      └────────────┬──────────┘      └──────────┬────────┘
+└──────────────────┘                   │                            │
+                                       ▼                            ▼
                                 ┌────────────────────────────────────────────┐
-                                │             app/ (FastAPI)                   │
-                                │  /regions/*, /advisory/*, /alerts/*          │
-                                │  Gemini integration + mock fallback          │
-                                └─────────────────────┬────────────────────────┘
-                                                        │
-                                                        ▼
+                                │             app/ (FastAPI)                 │
+                                │  /regions/*, /advisory/*, /alerts/*        │
+                                │  Gemini integration + mock fallback        │
+                                └─────────────────────┬──────────────────────┘
+                                                      │
+                                                      ▼
                                             ┌───────────────────────┐
-                                            │    web/ (Next.js)       │
-                                            │  Map + stats + advisory │
-                                            │  dashboard               │
+                                            │    web/ (Next.js)     │
+                                            │Map + stats + advisory │
+                                            │  dashboard            │
                                             └───────────────────────┘
 ```
 
@@ -109,8 +114,8 @@ Being upfront about this matters more than pretending it's all production-grade:
 |---|---|
 | Cyclone track (Fani, 2019) | Real — 71 points from NOAA IBTrACS |
 | Storm surge model | Real calculation, backtested against Fani + Amphan |
-| Infrastructure (hospital, shelter, power, road) | Placeholder — 4 hand-entered points; run `osm_extraction.py` for real OSM data |
-| Coastline | Placeholder — simplified 3-point line; needs a real digitized coastline |
+| Infrastructure (hospitals, power lines, substations) | Real — extracted from OpenStreetMap via Overpass API (574 features scored; road segments excluded by default, see note below) |
+| Coastline | Placeholder — simplified 4-point line following the real shore direction; needs a properly digitized coastline for production accuracy |
 | Elevation | Placeholder — synthetic distance-from-coast model; swap in real SRTM via `gee_pipeline.py` once GEE access is set up |
 | Rainfall (flood model input) | Placeholder — hardcoded value; wire up `met_feeds.py` (Open-Meteo) for real data |
 | Gemini advisories | Blocked — see note below |
@@ -136,6 +141,13 @@ as a bug.
   Amphan backtest needed a region-specific shelf-slope constant, which is a
   real modeling gap, not just a tuning knob
 - Backtested against 2 historical events only (Fani, Amphan)
+- Real OSM extraction over the full pilot bbox returns ~5,900 infrastructure
+  features, ~5,300 of them road segments. These are excluded from exposure
+  scoring and the map response by default (`DEFAULT_EXCLUDED_CATEGORIES` in
+  `app/modeling/export.py`) — they aren't the critical infrastructure this
+  exercise scores, and scoring/rendering all of them was slow enough to
+  crash the connection in testing. A production version would need spatial
+  indexing and map tiling/clustering to handle full road networks.
 
 ## Backtest
 
@@ -165,3 +177,10 @@ Pilot region ID: `pilot-odisha-puri`
 ## License
 
 _Add a license before making this repo public, if you haven't already._
+
+
+
+
+
+
+
